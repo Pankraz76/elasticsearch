@@ -124,8 +124,10 @@ rewrite {
 
 if (!getenv("skipCodeCleanup")) {
   tasks.check.dependsOn(tasks.rewriteDryRun)
+  tasks.check.dependsOn(tasks.spotlessJavaCheck)
   if (getenv("codeCleanup")) {
     tasks.assemble.dependsOn(tasks.rewriteRun)
+    tasks.assemble.dependsOn(tasks.spotlessApply)
   }
 }
 
