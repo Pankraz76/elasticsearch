@@ -128,6 +128,7 @@ if (!getenv("skipCodeCleanup")) {
   if (getenv("codeCleanup")) {
     tasks.assemble.dependsOn(tasks.rewriteRun)
     tasks.assemble.dependsOn(tasks.spotlessApply)
+    tasks.spotlessApply.mustRunAfter(tasks.rewriteRun);
   }
 }
 
