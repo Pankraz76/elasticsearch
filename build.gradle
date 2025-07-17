@@ -340,8 +340,7 @@ allprojects {
     }
     if (project.path.contains(":libs:cli")) {
       // ensure we resolve p2 dependencies for the spotless eclipse formatter
-      dependsOn spotlessJavaCheck
-      dependsOn rewriteDryRun
+      dependsOn "spotlessJavaCheck"
     }
 
   }
@@ -367,7 +366,7 @@ allprojects {
         }
       }
     }
-
+    
     proj.tasks.register("bcUpgradeTest$partString") {
       dependsOn tasks.matching { it.name == 'bcUpgradeTest' }
       withReleaseBuild {
@@ -573,7 +572,7 @@ tasks.register("buildReleaseArtifacts").configure {
   dependsOn upgradeCompatibilityZip
 }
 
-tasks.register(spotlessApply).configure {
+tasks.register("spotlessApply").configure {
   dependsOn gradle.includedBuild('build-tools').task(':spotlessApply')
   dependsOn gradle.includedBuild('build-tools').task(':reaper:spotlessApply')
   dependsOn gradle.includedBuild('build-tools-internal').task(':spotlessApply')
