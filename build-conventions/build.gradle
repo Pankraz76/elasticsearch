@@ -9,6 +9,7 @@
 
 import org.gradle.plugins.ide.eclipse.model.SourceFolder
 
+import static java.lang.System.getenv
 
 buildscript {
   repositories {
@@ -117,12 +118,13 @@ project.getPlugins().withType(JavaBasePlugin.class) {
 }
 
 tasks.withType(JavaCompile).configureEach {
-  options.incremental = System.getenv("JENKINS_URL") == null && System.getenv("BUILDKITE_BUILD_URL") == null && System.getProperty("isCI") == null
+  options.incremental = getenv("JENKINS_URL") == null && getenv("BUILDKITE_BUILD_URL") == null && System.getProperty("isCI") == null
 }
 
-if (!System.getenv("skipDogFood") && System.getenv("dogFoodDev")) {
-  tasks.assemble.dependsOn(tasks.rewriteRun)
-}
-if (!System.getenv("skipDogFood")) {
+if (!getenv("skipDogFood")) {
   tasks.precommit.dependsOn(tasks.rewriteDryRun)
+  if (getenv("dogFoodDev")) {
+    tasks.assemble.dependsOn(tasks.rewriteRun)
+  }
 }
+
