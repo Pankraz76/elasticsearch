@@ -7,6 +7,10 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
+plugins {
+  id("org.openrewrite.rewrite") version("latest.release") apply false
+}
+
 configure(subprojects.findAll { it.parent.path == project.path }) {
   group = 'org.elasticsearch.plugin' // for modules which publish client jars
   // apply plugin: 'elasticsearch.internal-testclusters'
@@ -23,31 +27,28 @@ configure(subprojects.findAll { it.parent.path == project.path }) {
   if (project.file('src/main/bin').exists()) {
     throw new InvalidModelException("Modules cannot contain bin files")
   }
-}
-allprojects {
-  plugins.withType(BuildPlugin).whenPluginAdded {
-    project.apply plugin: "org.openrewrite.rewrite"
-    rewrite {
-      activeRecipe("org.elasticsearch.openrewrite.recipe.CodeCleanup")
-      configFile = file("$rootDir/gradle/code-convention.yml")
-      exclusions.add("**OpenSearchTestCaseTests.java")
-      exclusions.add("**ScriptClassPathResolutionContext.java")
-      failOnDryRunResults = true
+
+  apply plugin: "org.openrewrite.rewrite"
+  rewrite {
+    activeRecipe("org.elasticsearch.openrewrite.recipe.CodeCleanup")
+    configFile = file("$rootDir/gradle/code-convention.yml")
+    exclusions.add("**OpenSearchTestCaseTests.java")
+    exclusions.add("**ScriptClassPathResolutionContext.java")
+    failOnDryRunResults = true
+  }
+  repositories {
+    mavenCentral()
+  }
+  dependencies {
+    rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
+    rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
+  }
+  tasks {
+    if (!getenv("skipDogFood") && getenv("dogFoodDev")) {
+      assemble.dependsOn(rewriteRun)
     }
-    repositories {
-      mavenCentral()
-    }
-    dependencies {
-      rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
-      rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
-    }
-    tasks {
-      if (!getenv("skipDogFood") && getenv("dogFoodDev")) {
-        assemble.dependsOn(rewriteRun)
-      }
-      if (!getenv("skipDogFood")) {
-        precommit.dependsOn(rewriteDryRun)
-      }
+    if (!getenv("skipDogFood")) {
+      precommit.dependsOn(rewriteDryRun)
     }
   }
 }
