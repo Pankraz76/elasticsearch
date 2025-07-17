@@ -126,9 +126,9 @@ rewrite {
   failOnDryRunResults = true
 }
 
-tasks.check.dependsOn(tasks.spotlessJavaCheck)
 if (getenv("isCI")) {
   tasks.check.dependsOn(tasks.rewriteDryRun)
+  tasks.check.dependsOn(tasks.spotlessJavaCheck)
 } else if (getenv("codeCleanup")) {
   tasks.assemble.dependsOn(tasks.rewriteRun)
   tasks.assemble.dependsOn(tasks.spotlessApply)
