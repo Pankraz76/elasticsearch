@@ -29,7 +29,7 @@ allprojects {
   plugins.withType(BuildPlugin).whenPluginAdded {
     project.apply plugin: "org.openrewrite.rewrite"
     rewrite {
-      activeRecipe("org.opensearch.openrewrite.recipe.CodeCleanup")
+      activeRecipe("org.elasticsearch.openrewrite.recipe.CodeCleanup")
       configFile = file("$rootDir/gradle/code-convention.yml")
       exclusions.add("**OpenSearchTestCaseTests.java")
       exclusions.add("**ScriptClassPathResolutionContext.java")
