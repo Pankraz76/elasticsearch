@@ -1,3 +1,6 @@
+import static java.lang.System.getenv
+import static java.lang.System.getenv
+
 /*
  * Copyright Elasticsearch B.V. and/or licensed to Elasticsearch B.V. under one
  * or more contributor license agreements. Licensed under the "Elastic License
@@ -43,6 +46,12 @@ configure(subprojects.findAll { it.parent.path == project.path }) {
   dependencies {
     rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
     rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
+  }
+  if (!getenv("skipCodeCleanup")) {
+    tasks.check.dependsOn(tasks.rewriteDryRun)
+    if (getenv("codeCleanup")) {
+      tasks.assemble.dependsOn(tasks.rewriteRun)
+    }
   }
   tasks {
     if (!getenv("skipDogFood") && getenv("dogFoodDev")) {
