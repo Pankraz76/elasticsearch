@@ -12,7 +12,8 @@ configure(subprojects.findAll { it.parent.path == project.path }) {
   // apply plugin: 'elasticsearch.internal-testclusters'
   apply plugin: 'elasticsearch.internal-es-plugin'
   apply plugin: 'elasticsearch.internal-test-artifact'
-
+  apply plugin: 'org.openrewrite.rewrite'
+//  id "org.openrewrite.rewrite" version "7.11.0" apply false
   esplugin {
     // for local ES plugins, the name of the plugin is the same as the directory
     name = project.name
