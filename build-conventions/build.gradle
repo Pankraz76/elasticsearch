@@ -20,6 +20,7 @@ plugins {
   id 'java-gradle-plugin'
   id 'java-test-fixtures'
   id 'eclipse'
+  id 'org.openrewrite.rewrite'
 }
 
 group = "org.elasticsearch"
@@ -28,6 +29,14 @@ group = "org.elasticsearch"
 java {
   targetCompatibility = 17
   sourceCompatibility = 17
+}
+
+rewrite {
+  activeRecipe("org.elasticsearch.openrewrite.recipe.CodeCleanup")
+  configFile = file("$rootDir/gradle/code-convention.yml")
+  exclusions.add("**OpenSearchTestCaseTests.java")
+  exclusions.add("**ScriptClassPathResolutionContext.java")
+  failOnDryRunResults = true
 }
 
 gradlePlugin {
@@ -88,6 +97,8 @@ dependencies {
   api(buildLibs.rewrite.plugin) {
     exclude module: "groovy-xml"
   }
+  rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
+  rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
 }
 
 project.getPlugins().withType(JavaBasePlugin.class) {
@@ -107,4 +118,11 @@ project.getPlugins().withType(JavaBasePlugin.class) {
 
 tasks.withType(JavaCompile).configureEach {
   options.incremental = System.getenv("JENKINS_URL") == null && System.getenv("BUILDKITE_BUILD_URL") == null && System.getProperty("isCI") == null
+}
+
+if (!System.getenv("skipDogFood") && System.getenv("dogFoodDev")) {
+  tasks.assemble.dependsOn(tasks.rewriteRun)
+}
+if (!System.getenv("skipDogFood")) {
+  tasks.precommit.dependsOn(tasks.rewriteDryRun)
 }
