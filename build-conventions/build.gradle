@@ -122,7 +122,6 @@ rewrite {
   activeRecipe("org.elasticsearch.openrewrite.recipe.CodeCleanup")
   configFile = file("$rootDir/gradle/code-convention.yml")
   exclusions.add("**OpenSearchTestCaseTests.java")
-  exclusions.add("**ScriptClassPathResolutionContext.java")
   failOnDryRunResults = true
 }
 
