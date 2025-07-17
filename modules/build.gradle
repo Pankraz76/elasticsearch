@@ -13,7 +13,6 @@ configure(subprojects.findAll { it.parent.path == project.path }) {
   apply plugin: 'elasticsearch.internal-es-plugin'
   apply plugin: 'elasticsearch.internal-test-artifact'
   apply plugin: 'org.openrewrite.rewrite'
-//  id "org.openrewrite.rewrite" version "7.11.0" apply false
   esplugin {
     // for local ES plugins, the name of the plugin is the same as the directory
     name = project.name
@@ -24,5 +23,32 @@ configure(subprojects.findAll { it.parent.path == project.path }) {
   }
   if (project.file('src/main/bin').exists()) {
     throw new InvalidModelException("Modules cannot contain bin files")
+  }
+}
+allprojects {
+  plugins.withType(BuildPlugin).whenPluginAdded {
+    project.apply plugin: "org.openrewrite.rewrite"
+    rewrite {
+      activeRecipe("org.opensearch.openrewrite.recipe.CodeCleanup")
+      configFile = file("$rootDir/gradle/code-convention.yml")
+      exclusions.add("**OpenSearchTestCaseTests.java")
+      exclusions.add("**ScriptClassPathResolutionContext.java")
+      failOnDryRunResults = true
+    }
+    repositories {
+      mavenCentral()
+    }
+    dependencies {
+      rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
+      rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
+    }
+    tasks {
+      if (!getenv("skipDogFood") && getenv("dogFoodDev")) {
+        assemble.dependsOn(rewriteRun)
+      }
+      if (!getenv("skipDogFood")) {
+        precommit.dependsOn(rewriteDryRun)
+      }
+    }
   }
 }
