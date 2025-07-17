@@ -84,6 +84,10 @@ dependencies {
     api("org.eclipse.platform:org.eclipse.osgi:3.18.300") {
       because("Use the same version as we do in spotless gradle plugin at runtime")
     }
+    api('org.jetbrains.kotlin:kotlin-stdlib:1.9.0')
+    api('org.jetbrains.kotlin:kotlin-stdlib-common:1.9.0')
+    api('org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0')
+    api('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0')
   }
   api(buildLibs.spotless.plugin) {
     exclude module: "groovy-xml"
@@ -122,13 +126,12 @@ rewrite {
   failOnDryRunResults = true
 }
 
-if (!getenv("skipCodeCleanup")) {
+tasks.check.dependsOn(tasks.spotlessJavaCheck)
+if (getenv("isCI")) {
   tasks.check.dependsOn(tasks.rewriteDryRun)
-  tasks.check.dependsOn(tasks.spotlessJavaCheck)
-  if (getenv("codeCleanup")) {
-    tasks.assemble.dependsOn(tasks.rewriteRun)
-    tasks.assemble.dependsOn(tasks.spotlessApply)
-    tasks.spotlessApply.mustRunAfter(tasks.rewriteRun);
-  }
+} else if (getenv("codeCleanup")) {
+  tasks.assemble.dependsOn(tasks.rewriteRun)
+  tasks.assemble.dependsOn(tasks.spotlessApply)
+  tasks.spotlessApply.mustRunAfter(tasks.rewriteRun);
 }
 

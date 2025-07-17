@@ -80,6 +80,7 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
             });
 
             project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
+            project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("rewriteDryRun"));
         });
     }
 }
