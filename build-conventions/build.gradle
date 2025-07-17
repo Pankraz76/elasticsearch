@@ -122,9 +122,9 @@ rewrite {
   failOnDryRunResults = true
 }
 
-if (!getenv("skipDogFood")) {
-  tasks.precommit.dependsOn(tasks.rewriteDryRun)
-  if (getenv("dogFoodDev")) {
+if (!getenv("skipCodeCleanup")) {
+  tasks.check.dependsOn(tasks.rewriteDryRun)
+  if (getenv("codeCleanup")) {
     tasks.assemble.dependsOn(tasks.rewriteRun)
   }
 }
