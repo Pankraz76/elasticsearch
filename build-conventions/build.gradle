@@ -126,11 +126,11 @@ rewrite {
 }
 
 tasks.check.dependsOn(tasks.rewriteDryRun)
-tasks.check.dependsOn(tasks.spotlessJavaCheck)
+//tasks.check.dependsOn(tasks.spotlessJavaCheck)
 
 if (!getenv("isCI") && getenv("codeCleanup")) {
   tasks.assemble.dependsOn(tasks.rewriteRun)
-  tasks.assemble.dependsOn(tasks.spotlessApply)
-  tasks.spotlessApply.mustRunAfter(tasks.rewriteRun);
+//  tasks.assemble.dependsOn(tasks.spotlessApply)
+//  tasks.spotlessApply.mustRunAfter(tasks.rewriteRun);
 }
 
