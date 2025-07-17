@@ -86,6 +86,7 @@ dependencies {
   api buildLibs.shadow.plugin
   api buildLibs.apache.rat
   api buildLibs.nmcp
+  api buildLibs.nmcp
   compileOnly buildLibs.checkstyle
   constraints {
     api("org.eclipse.platform:org.eclipse.osgi:3.18.300") {
