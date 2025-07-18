@@ -28,13 +28,11 @@ import static java.lang.System.getenv;
  *
  * <p>To perform a reformat, run:
  *
- * <pre>    ./gradlew spotlessApply</pre>
- * <pre>    ./gradlew rewriteRun</pre>
+ * <pre>    ./gradlew rewriteRun spotlessApply</pre>
  *
  * <p>To check the current format, run:
  *
- * <pre>    ./gradlew spotlessJavaCheck</pre>
- * <pre>    ./gradlew rewriteDryRun</pre>
+ * <pre>    ./gradlew rewriteDryRun spotlessJavaCheck</pre>
  *
  * <p>This is also carried out by the `precommit` task.
  *
@@ -64,6 +62,7 @@ public class CheckPlugin implements Plugin<Project> {
         project.getTasks().named("check").configure(check -> check.dependsOn("spotlessJavaCheck"));
         if (!IS_CI && CODE_CLEANUP) {
             project.getTasks().named("assemble").configure(check -> check.dependsOn("rewriteRun"));
+            project.getTasks().named("assemble").configure(check -> check.dependsOn("spotlessApply"));
         }
     }
 }
