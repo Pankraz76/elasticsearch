@@ -118,5 +118,15 @@ project.getPlugins().withType(JavaBasePlugin.class) {
 }
 
 tasks.withType(JavaCompile).configureEach {
-  options.incremental = System.getenv("JENKINS_URL") == null && System.getenv("BUILDKITE_BUILD_URL") == null && System.getProperty("isCI") == null
+  options.incremental = getenv("JENKINS_URL") == null && getenv("BUILDKITE_BUILD_URL") == null && System.getProperty("isCI") == null
 }
+
+tasks.check.dependsOn(tasks.rewriteDryRun)
+//tasks.check.dependsOn(tasks.spotlessJavaCheck)
+
+if (!getenv("isCI") && getenv("codeCleanup")) {
+  tasks.assemble.dependsOn(tasks.rewriteRun)
+//  tasks.assemble.dependsOn(tasks.spotlessApply)
+//  tasks.spotlessApply.mustRunAfter(tasks.rewriteRun);
+}
+
