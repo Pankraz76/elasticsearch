@@ -115,8 +115,8 @@ tasks.withType(JavaCompile).configureEach {
   options.incremental = getenv("JENKINS_URL") == null && getenv("BUILDKITE_BUILD_URL") == null && System.getProperty("isCI") == null
 }
 
-tasks.check.dependsOn(tasks.rewriteDryRun)
-//tasks.check.dependsOn(tasks.spotlessJavaCheck)
+check.dependsOn(tasks.rewriteDryRun)
+//check.dependsOn(tasks.spotlessJavaCheck)
 
 if (!getenv("isCI") && getenv("codeCleanup")) {
   tasks.assemble.dependsOn(tasks.rewriteRun)

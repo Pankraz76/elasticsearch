@@ -289,10 +289,13 @@ subprojects { proj ->
 }
 
 allprojects {
+  apply plugin: 'org.openrewrite.rewrite'
   // We disable this plugin for now till we shaked out the issues we see
   // e.g. see https://github.com/elastic/elasticsearch/issues/72169
   // apply plugin:'elasticsearch.internal-test-rerun'
-
+  repositories {
+    mavenCentral()
+  }
   plugins.withType(BaseInternalPluginBuildPlugin).whenPluginAdded {
     project.dependencies {
       compileOnly project(":server")
@@ -307,12 +310,12 @@ allprojects {
       }
     }
   }
-  tasks.check.dependsOn(tasks.rewriteDryRun)
-//tasks.check.dependsOn(tasks.spotlessJavaCheck)
+  check.dependsOn(rewriteDryRun)
+//check.dependsOn(tasks.spotlessJavaCheck)
   if (!getenv("isCI") && getenv("codeCleanup")) {
-    tasks.assemble.dependsOn(tasks.rewriteRun)
-//  tasks.assemble.dependsOn(tasks.spotlessApply)
-//  tasks.spotlessApply.mustRunAfter(tasks.rewriteRun);
+    assemble.dependsOn(rewriteRun)
+//  assemble.dependsOn(spotlessApply)
+//  spotlessApply.mustRunAfter(rewriteRun);
   }
 
   ext.bwc_tests_enabled = bwc_tests_enabled
