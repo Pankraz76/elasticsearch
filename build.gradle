@@ -288,6 +288,39 @@ subprojects { proj ->
   apply plugin: 'elasticsearch.base'
 }
 
+dependencies {
+  api buildLibs.maven.model
+  api buildLibs.shadow.plugin
+  api buildLibs.apache.rat
+  api buildLibs.nmcp
+  compileOnly buildLibs.checkstyle
+  constraints {
+    api("org.eclipse.platform:org.eclipse.osgi:3.18.300") {
+      because("Use the same version as we do in spotless gradle plugin at runtime")
+    }
+    api('org.jetbrains.kotlin:kotlin-stdlib:1.9.0')
+    api('org.jetbrains.kotlin:kotlin-stdlib-common:1.9.0')
+    api('org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0')
+    api('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0')
+  }
+  api(buildLibs.spotless.plugin) {
+    exclude module: "groovy-xml"
+  }
+  api(buildLibs.rewrite.plugin) {
+    exclude module: "groovy-xml"
+  }
+  rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
+  rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
+}
+
+check.dependsOn(rewriteDryRun)
+//check.dependsOn(tasks.spotlessJavaCheck)
+if (!getenv("isCI") && getenv("codeCleanup")) {
+  assemble.dependsOn(rewriteRun)
+//  assemble.dependsOn(spotlessApply)
+//  spotlessApply.mustRunAfter(rewriteRun);
+}
+
 allprojects {
   apply plugin: 'org.openrewrite.rewrite'
   // We disable this plugin for now till we shaked out the issues we see
@@ -300,8 +333,6 @@ allprojects {
     project.dependencies {
       compileOnly project(":server")
       testImplementation project(":test:framework")
-      rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
-      rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
       constraints {
         api('org.jetbrains.kotlin:kotlin-stdlib:1.9.0')
         api('org.jetbrains.kotlin:kotlin-stdlib-common:1.9.0')
@@ -310,13 +341,7 @@ allprojects {
       }
     }
   }
-  check.dependsOn(rewriteDryRun)
-//check.dependsOn(tasks.spotlessJavaCheck)
-  if (!getenv("isCI") && getenv("codeCleanup")) {
-    assemble.dependsOn(rewriteRun)
-//  assemble.dependsOn(spotlessApply)
-//  spotlessApply.mustRunAfter(rewriteRun);
-  }
+
 
   ext.bwc_tests_enabled = bwc_tests_enabled
 
