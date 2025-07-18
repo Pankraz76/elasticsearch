@@ -39,7 +39,7 @@ import static java.lang.System.getenv;
  * <p>See also the <a href="https://github.com/diffplug/spotless/tree/master/plugin-gradle"
  * >Spotless project page</a>.
  */
-public class CheckPlugin implements Plugin<Project> {
+public class CheckConventionsPlugin implements Plugin<Project> {
 
     private static final boolean IS_CI = parseBoolean(getenv("isCI"));
     private static final boolean CODE_CLEANUP = parseBoolean(getenv("codeCleanup"));

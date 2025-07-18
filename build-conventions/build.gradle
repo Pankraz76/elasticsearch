@@ -65,9 +65,9 @@ gradlePlugin {
       id = 'elasticsearch.formatting'
       implementationClass = 'org.elasticsearch.gradle.internal.conventions.precommit.FormattingPrecommitPlugin'
     }
-    rewrite {
-      id = 'elasticsearch.rewrite'
-      implementationClass = 'org.elasticsearch.gradle.internal.conventions.CheckPlugin'
+    checkConventions {
+      id = 'elasticsearch.checkConventions'
+      implementationClass = 'org.elasticsearch.gradle.internal.conventions.CheckConventionsPlugin'
     }
   }
 }
@@ -81,7 +81,6 @@ dependencies {
   api buildLibs.maven.model
   api buildLibs.shadow.plugin
   api buildLibs.apache.rat
-  api buildLibs.nmcp
   api buildLibs.nmcp
   compileOnly buildLibs.checkstyle
   constraints {
@@ -119,15 +118,5 @@ project.getPlugins().withType(JavaBasePlugin.class) {
 }
 
 tasks.withType(JavaCompile).configureEach {
-  options.incremental = getenv("JENKINS_URL") == null && getenv("BUILDKITE_BUILD_URL") == null && System.getProperty("isCI") == null
+  options.incremental = System.getenv("JENKINS_URL") == null && System.getenv("BUILDKITE_BUILD_URL") == null && System.getProperty("isCI") == null
 }
-
-tasks.check.dependsOn(tasks.rewriteDryRun)
-//tasks.check.dependsOn(tasks.spotlessJavaCheck)
-
-if (!getenv("isCI") && getenv("codeCleanup")) {
-  tasks.assemble.dependsOn(tasks.rewriteRun)
-//  tasks.assemble.dependsOn(tasks.spotlessApply)
-//  tasks.spotlessApply.mustRunAfter(tasks.rewriteRun);
-}
-
