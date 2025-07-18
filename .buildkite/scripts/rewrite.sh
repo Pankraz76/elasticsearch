@@ -6,7 +6,7 @@ if [[ -z "${BUILDKITE_PULL_REQUEST:-}" ]]; then
 fi
 
 if ! git diff --exit-code; then
-  echo "Changes are present before running rewrite, not running"
+  echo "Changes are present before running rewrite, not running."
   git status
   exit 0
 fi
@@ -23,7 +23,7 @@ if git diff --exit-code; then
 fi
 
 if [[ "$NEW_COMMIT_MESSAGE" == "$PREVIOUS_COMMIT_MESSAGE" ]]; then
-  echo "Changes found after running rewrite"
+  echo "Changes found after running rewrite."
   echo "CI already attempted to commit these changes, but the file(s) seem to have changed again."
   echo "Please review and fix manually."
   exit 1

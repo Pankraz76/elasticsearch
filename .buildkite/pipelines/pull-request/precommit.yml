@@ -5,7 +5,6 @@ steps:
   - label: precommit
     command: |
       .buildkite/scripts/rewrite.sh
-      .ci/scripts/run-gradle.sh -Dignore.tests.seed precommit
       .buildkite/scripts/spotless.sh
       .ci/scripts/run-gradle.sh -Dignore.tests.seed precommit
     timeout_in_minutes: 300
