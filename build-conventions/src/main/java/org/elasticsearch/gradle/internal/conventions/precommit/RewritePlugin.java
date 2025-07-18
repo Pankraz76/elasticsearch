@@ -19,6 +19,9 @@ import org.openrewrite.gradle.RewriteExtension;
 
 import java.io.File;
 
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.System.getenv;
+
 /**
  * This plugin configures formatting for Java source using Spotless
  * for Gradle. Since the act of formatting existing source can interfere
@@ -44,6 +47,7 @@ import java.io.File;
  */
 public class RewritePlugin implements Plugin<Project> {
 
+    @SuppressWarnings("checkstyle:DescendantToken")
     @Override
     public void apply(Project project) {
         RewriteExtension rewriteExtension = project.getExtensions().getByType(RewriteExtension.class);
@@ -53,12 +57,14 @@ public class RewritePlugin implements Plugin<Project> {
         );
         rewriteExtension.activeRecipe(
             "org.openrewrite.java.RemoveUnusedImports",
-            "org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
-            "org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
+//            "org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
+//            "org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
             "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
         );
-
-        project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
-        project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("rewriteDryRun"));
+        project.getTasks().named("check").configure(check -> check.dependsOn("rewriteDryRun"));
+        if (!parseBoolean(getenv("isCI"))
+            && parseBoolean(getenv("codeCleanup"))) {
+            project.getTasks().named("assemble").configure(check -> check.dependsOn("rewriteRun"));
+        }
     }
 }
