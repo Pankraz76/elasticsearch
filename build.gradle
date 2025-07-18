@@ -52,6 +52,7 @@ plugins {
   id 'elasticsearch.release-tools'
   id 'elasticsearch.versions'
   id 'com.gradleup.nmcp.aggregation'
+  id 'org.openrewrite.rewrite' version '7.11.0'
 }
 
 version = VersionProperties.elasticsearch
@@ -294,6 +295,14 @@ allprojects {
     project.dependencies {
       compileOnly project(":server")
       testImplementation project(":test:framework")
+      rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
+      rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
+      constraints {
+        api('org.jetbrains.kotlin:kotlin-stdlib:1.9.0')
+        api('org.jetbrains.kotlin:kotlin-stdlib-common:1.9.0')
+        api('org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0')
+        api('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0')
+      }
     }
   }
 
