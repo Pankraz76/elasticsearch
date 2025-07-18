@@ -47,6 +47,9 @@ import static java.lang.System.getenv;
  */
 public class RewritePlugin implements Plugin<Project> {
 
+    private static final boolean IS_CI = parseBoolean(getenv("isCI"));
+    private static final boolean CODE_CLEANUP = parseBoolean(getenv("codeCleanup"));
+
     @SuppressWarnings("checkstyle:DescendantToken")
     @Override
     public void apply(Project project) {
@@ -62,8 +65,7 @@ public class RewritePlugin implements Plugin<Project> {
             "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
         );
         project.getTasks().named("check").configure(check -> check.dependsOn("rewriteDryRun"));
-        if (!parseBoolean(getenv("isCI"))
-            && parseBoolean(getenv("codeCleanup"))) {
+        if (!IS_CI && CODE_CLEANUP) {
             project.getTasks().named("assemble").configure(check -> check.dependsOn("rewriteRun"));
         }
     }
