@@ -23,6 +23,8 @@ import org.gradle.plugins.ide.eclipse.model.AccessRule
 
 import java.nio.file.Files
 
+import static java.lang.System.getenv
+import static java.lang.System.getenv
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static org.elasticsearch.gradle.util.GradleUtils.maybeConfigure
 
@@ -304,6 +306,13 @@ allprojects {
         api('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0')
       }
     }
+  }
+  tasks.check.dependsOn(tasks.rewriteDryRun)
+//tasks.check.dependsOn(tasks.spotlessJavaCheck)
+  if (!getenv("isCI") && getenv("codeCleanup")) {
+    tasks.assemble.dependsOn(tasks.rewriteRun)
+//  tasks.assemble.dependsOn(tasks.spotlessApply)
+//  tasks.spotlessApply.mustRunAfter(tasks.rewriteRun);
   }
 
   ext.bwc_tests_enabled = bwc_tests_enabled
