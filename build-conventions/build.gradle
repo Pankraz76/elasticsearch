@@ -65,6 +65,10 @@ gradlePlugin {
       id = 'elasticsearch.formatting'
       implementationClass = 'org.elasticsearch.gradle.internal.conventions.precommit.FormattingPrecommitPlugin'
     }
+    rewrite {
+      id = 'elasticsearch.rewrite'
+      implementationClass = 'org.elasticsearch.gradle.internal.conventions.precommit.FormattingPrecommitPlugin'
+    }
   }
 }
 
@@ -116,13 +120,6 @@ project.getPlugins().withType(JavaBasePlugin.class) {
 
 tasks.withType(JavaCompile).configureEach {
   options.incremental = getenv("JENKINS_URL") == null && getenv("BUILDKITE_BUILD_URL") == null && System.getProperty("isCI") == null
-}
-
-rewrite {
-  activeRecipe("org.elasticsearch.openrewrite.recipe.CodeCleanup")
-  configFile = file("$rootDir/gradle/code-convention.yml")
-  exclusions.add("**OpenSearchTestCaseTests.java")
-  failOnDryRunResults = true
 }
 
 tasks.check.dependsOn(tasks.rewriteDryRun)
