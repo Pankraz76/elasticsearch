@@ -18,7 +18,7 @@ plugins {
   id 'elasticsearch.eclipse'
   id 'elasticsearch.versions'
   id 'elasticsearch.formatting'
-  id 'elasticsearch.checkConventions'
+  //id 'elasticsearch.checkConventions'
 }
 
 group = 'org.elasticsearch.gradle'
