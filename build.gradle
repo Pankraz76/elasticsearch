@@ -325,9 +325,7 @@ allprojects {
   // We disable this plugin for now till we shaked out the issues we see
   // e.g. see https://github.com/elastic/elasticsearch/issues/72169
   // apply plugin:'elasticsearch.internal-test-rerun'
-  repositories {
-    mavenCentral()
-  }
+
   plugins.withType(BaseInternalPluginBuildPlugin).whenPluginAdded {
     project.dependencies {
       compileOnly project(":server")
@@ -340,7 +338,6 @@ allprojects {
       }
     }
   }
-
 
   ext.bwc_tests_enabled = bwc_tests_enabled
 
