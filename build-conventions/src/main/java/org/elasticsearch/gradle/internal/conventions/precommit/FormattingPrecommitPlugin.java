@@ -15,13 +15,8 @@ import com.diffplug.gradle.spotless.SpotlessPlugin;
 import org.elasticsearch.gradle.internal.conventions.util.Util;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
-import org.openrewrite.gradle.RewriteExtension;
-import org.openrewrite.gradle.RewritePlugin;
 
 import java.io.File;
-
-import static java.lang.Boolean.parseBoolean;
-import static java.lang.System.getenv;
 
 /**
  * This plugin configures formatting for Java source using Spotless
@@ -48,13 +43,11 @@ import static java.lang.System.getenv;
  */
 public class FormattingPrecommitPlugin implements Plugin<Project> {
 
-    @SuppressWarnings("checkstyle:DescendantToken")
     @Override
     public void apply(Project project) {
         project.getPluginManager().withPlugin("java-base", javaBasePlugin -> {
             project.getPlugins().apply(PrecommitTaskPlugin.class);
             project.getPlugins().apply(SpotlessPlugin.class);
-            project.getPlugins().apply(RewritePlugin.class);
 
             // Spotless resolves required dependencies from project repositories, so we need maven central
             project.getRepositories().mavenCentral();
@@ -84,24 +77,8 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
                     java.targetExclude("src/main/java/org/elasticsearch/bootstrap/BootstrapInfo.java");
                 }
             });
-            RewriteExtension rewriteExtension = project.getExtensions().getByType(RewriteExtension.class);
-            rewriteExtension.setFailOnDryRunResults(true);
-            rewriteExtension.exclusion(
-                "**OpenSearchTestCaseTests.java"
-            );
-            rewriteExtension.activeRecipe(
-                "org.openrewrite.java.RemoveUnusedImports",
-                "org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
-                "org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
-                "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
-            );
-            project.getTasks().named("check").configure(check -> check.dependsOn("rewriteDryRun"));
 
-            if (!parseBoolean(getenv("isCI"))
-                && parseBoolean(getenv("codeCleanup"))) {
-            project.getTasks().named("assemble").configure(check -> check.dependsOn("rewriteRun"));
-            }
-
+            project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
         });
     }
 }
