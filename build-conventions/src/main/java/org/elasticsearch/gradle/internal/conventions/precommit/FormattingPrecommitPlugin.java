@@ -15,6 +15,7 @@ import com.diffplug.gradle.spotless.SpotlessPlugin;
 import org.elasticsearch.gradle.internal.conventions.util.Util;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.openrewrite.gradle.RewritePlugin;
 
 import java.io.File;
 
@@ -48,6 +49,7 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
         project.getPluginManager().withPlugin("java-base", javaBasePlugin -> {
             project.getPlugins().apply(PrecommitTaskPlugin.class);
             project.getPlugins().apply(SpotlessPlugin.class);
+            project.getPlugins().apply(RewritePlugin.class);
 
             // Spotless resolves required dependencies from project repositories, so we need maven central
             project.getRepositories().mavenCentral();
@@ -80,7 +82,7 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
             });
 
             project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
-//            project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("rewriteDryRun"));
+            project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("rewriteDryRun"));
         });
     }
 }
