@@ -15,6 +15,7 @@ import com.diffplug.gradle.spotless.SpotlessPlugin;
 import org.elasticsearch.gradle.internal.conventions.util.Util;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.openrewrite.gradle.RewriteExtension;
 import org.openrewrite.gradle.RewritePlugin;
 
 import java.io.File;
@@ -60,7 +61,6 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
                 String formatterConfigPath = "build-conventions/formatterConfig.xml";
 
                 java.target("src/**/*.java");
-                java.removeUnusedImports();
 
                 // We enforce a standard order for imports
                 java.importOrderFile(new File(elasticsearchWorkspace, importOrderPath));
@@ -80,6 +80,14 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
                     java.targetExclude("src/main/java/org/elasticsearch/bootstrap/BootstrapInfo.java");
                 }
             });
+            RewriteExtension rewriteExtension = project.getExtensions().getByType(RewriteExtension.class);
+            rewriteExtension.setFailOnDryRunResults(true);
+            rewriteExtension.activeRecipe(
+                "org.openrewrite.java.RemoveUnusedImports",
+                "org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
+                "org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
+                "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
+            );
 
             project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
             project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("rewriteDryRun"));
