@@ -67,7 +67,7 @@ gradlePlugin {
     }
     rewrite {
       id = 'elasticsearch.rewrite'
-      implementationClass = 'org.elasticsearch.gradle.internal.conventions.precommit.RewritePlugin'
+      implementationClass = 'org.elasticsearch.gradle.internal.conventions.CheckPlugin'
     }
   }
 }

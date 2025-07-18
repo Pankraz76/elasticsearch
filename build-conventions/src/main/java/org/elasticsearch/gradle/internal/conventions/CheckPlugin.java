@@ -7,7 +7,7 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-package org.elasticsearch.gradle.internal.conventions.check;
+package org.elasticsearch.gradle.internal.conventions;
 
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
@@ -29,17 +29,19 @@ import static java.lang.System.getenv;
  * <p>To perform a reformat, run:
  *
  * <pre>    ./gradlew spotlessApply</pre>
+ * <pre>    ./gradlew rewriteRun</pre>
  *
  * <p>To check the current format, run:
  *
  * <pre>    ./gradlew spotlessJavaCheck</pre>
+ * <pre>    ./gradlew rewriteDryRun</pre>
  *
  * <p>This is also carried out by the `precommit` task.
  *
  * <p>See also the <a href="https://github.com/diffplug/spotless/tree/master/plugin-gradle"
  * >Spotless project page</a>.
  */
-public class RewritePlugin implements Plugin<Project> {
+public class CheckPlugin implements Plugin<Project> {
 
     private static final boolean IS_CI = parseBoolean(getenv("isCI"));
     private static final boolean CODE_CLEANUP = parseBoolean(getenv("codeCleanup"));
@@ -59,6 +61,7 @@ public class RewritePlugin implements Plugin<Project> {
             "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
         );
         project.getTasks().named("check").configure(check -> check.dependsOn("rewriteDryRun"));
+        project.getTasks().named("check").configure(check -> check.dependsOn("spotlessJavaCheck"));
         if (!IS_CI && CODE_CLEANUP) {
             project.getTasks().named("assemble").configure(check -> check.dependsOn("rewriteRun"));
         }
