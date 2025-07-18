@@ -7,17 +7,11 @@
  * License v3.0 only", or the "Server Side Public License, v 1".
  */
 
-package org.elasticsearch.gradle.internal.conventions.precommit;
+package org.elasticsearch.gradle.internal.conventions.check;
 
-import com.diffplug.gradle.spotless.SpotlessExtension;
-import com.diffplug.gradle.spotless.SpotlessPlugin;
-
-import org.elasticsearch.gradle.internal.conventions.util.Util;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
 import org.openrewrite.gradle.RewriteExtension;
-
-import java.io.File;
 
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.System.getenv;
