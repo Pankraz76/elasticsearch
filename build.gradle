@@ -54,7 +54,7 @@ plugins {
   id 'elasticsearch.release-tools'
   id 'elasticsearch.versions'
   id 'com.gradleup.nmcp.aggregation'
-  id 'org.openrewrite.rewrite' version '7.11.0'
+  id 'org.openrewrite.rewrite'
 }
 
 version = VersionProperties.elasticsearch
