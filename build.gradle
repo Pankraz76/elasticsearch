@@ -23,7 +23,6 @@ import org.gradle.plugins.ide.eclipse.model.AccessRule
 
 import java.nio.file.Files
 
-import static java.lang.System.getenv
 import static java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import static org.elasticsearch.gradle.util.GradleUtils.maybeConfigure
 
@@ -53,7 +52,6 @@ plugins {
   id 'elasticsearch.release-tools'
   id 'elasticsearch.versions'
   id 'com.gradleup.nmcp.aggregation'
-  id 'org.openrewrite.rewrite'
 }
 
 version = VersionProperties.elasticsearch
@@ -287,21 +285,7 @@ subprojects { proj ->
   apply plugin: 'elasticsearch.base'
 }
 
-dependencies {
-  rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
-  rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
-}
-
-check.dependsOn(rewriteDryRun)
-//check.dependsOn(tasks.spotlessJavaCheck)
-if (!getenv("isCI") && getenv("codeCleanup")) {
-  assemble.dependsOn(rewriteRun)
-//  assemble.dependsOn(spotlessApply)
-//  spotlessApply.mustRunAfter(rewriteRun);
-}
-
 allprojects {
-  apply plugin: 'org.openrewrite.rewrite'
   // We disable this plugin for now till we shaked out the issues we see
   // e.g. see https://github.com/elastic/elasticsearch/issues/72169
   // apply plugin:'elasticsearch.internal-test-rerun'
@@ -310,12 +294,6 @@ allprojects {
     project.dependencies {
       compileOnly project(":server")
       testImplementation project(":test:framework")
-      constraints {
-        api('org.jetbrains.kotlin:kotlin-stdlib:1.9.0')
-        api('org.jetbrains.kotlin:kotlin-stdlib-common:1.9.0')
-        api('org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0')
-        api('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0')
-      }
     }
   }
 
@@ -388,7 +366,7 @@ allprojects {
         }
       }
     }
-
+    
     proj.tasks.register("bcUpgradeTest$partString") {
       dependsOn tasks.matching { it.name == 'bcUpgradeTest' }
       withReleaseBuild {
@@ -462,7 +440,6 @@ allprojects {
   }
 
   apply plugin: 'elasticsearch.formatting'
-  //apply plugin: 'elasticsearch.checkConventions'
 }
 
 tasks.named("updateDaemonJvm") {
