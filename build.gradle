@@ -288,26 +288,13 @@ subprojects { proj ->
 }
 
 dependencies {
-  api buildLibs.maven.model
-  api buildLibs.shadow.plugin
-  api buildLibs.apache.rat
-  api buildLibs.nmcp
-  compileOnly buildLibs.checkstyle
   constraints {
-    api("org.eclipse.platform:org.eclipse.osgi:3.18.300") {
-      because("Use the same version as we do in spotless gradle plugin at runtime")
-    }
     api('org.jetbrains.kotlin:kotlin-stdlib:1.9.0')
     api('org.jetbrains.kotlin:kotlin-stdlib-common:1.9.0')
     api('org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.9.0')
     api('org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.9.0')
   }
-  api(buildLibs.spotless.plugin) {
-    exclude module: "groovy-xml"
-  }
-  api(buildLibs.rewrite.plugin) {
-    exclude module: "groovy-xml"
-  }
+  api(buildLibs.rewrite.plugin)
   rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
   rewrite("org.openrewrite.recipe:rewrite-static-analysis:2.12.0")
 }
