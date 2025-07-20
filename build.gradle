@@ -366,7 +366,7 @@ allprojects {
         }
       }
     }
-    
+
     proj.tasks.register("bcUpgradeTest$partString") {
       dependsOn tasks.matching { it.name == 'bcUpgradeTest' }
       withReleaseBuild {
@@ -440,6 +440,7 @@ allprojects {
   }
 
   apply plugin: 'elasticsearch.formatting'
+  apply plugin: 'elasticsearch.checkConventions'
 }
 
 tasks.named("updateDaemonJvm") {
