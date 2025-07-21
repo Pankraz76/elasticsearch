@@ -75,22 +75,15 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
     private static void spotless(Project project) {
         project.getExtensions().getByType(SpotlessExtension.class).java(java -> {
             File elasticsearchWorkspace = Util.locateElasticsearchWorkspace(project.getGradle());
-            String importOrderPath = "build-conventions/elastic.importorder";
-            String formatterConfigPath = "build-conventions/formatterConfig.xml";
-
-            java.target("src/**/*.java");
-
-            // We enforce a standard order for imports
-            java.importOrderFile(new File(elasticsearchWorkspace, importOrderPath));
-
-            // Most formatting is done through the Eclipse formatter
-            java.eclipse().configFile(new File(elasticsearchWorkspace, formatterConfigPath));
-
+            java.importOrderFile(new File(elasticsearchWorkspace,
+                "build-conventions/elastic.importorder")); // We enforce a standard order for imports
+            java.eclipse().configFile(new File(elasticsearchWorkspace,
+                "build-conventions/formatterConfig.xml")); // Most formatting is done through the Eclipse formatter
             // Ensure blank lines are actually empty. Since formatters are applied in
             // order, apply this one last, otherwise non-empty blank lines can creep
             // in.
             java.trimTrailingWhitespace();
-
+            java.target("**/*.java");
             // When running build benchmarks we alter the source in some scenarios.
             // The gradle-profiler unfortunately does not generate compliant formatted
             // sources so we ignore that altered file when running build benchmarks
@@ -107,11 +100,10 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
         rewriteExtension.exclusion(
             "**OpenSearchTestCaseTests.java"
         );
-//         rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
         rewriteExtension.activeRecipe(
             "org.openrewrite.java.RemoveUnusedImports",
-//            "org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
-//            "org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
+            "org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
+            "org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
             "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
         );
         project.getTasks().named("check").configure(check -> check.dependsOn("rewriteDryRun"));
