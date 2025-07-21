@@ -101,6 +101,7 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
     private static void rewrite(Project project) {
 //        RewriteExtension rewriteExtension = project.getExtensions().getByType(RewriteExtension.class);
 //        rewriteExtension.setFailOnDryRunResults(true);
+//        rewriteExtension.setExportDatabase(true);
 //        rewriteExtension.exclusion(
 //            "**OpenSearchTestCaseTests.java"
 //        );
