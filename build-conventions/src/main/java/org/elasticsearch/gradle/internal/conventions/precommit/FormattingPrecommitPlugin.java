@@ -18,6 +18,9 @@ import org.gradle.api.Project;
 
 import java.io.File;
 
+import static java.lang.Boolean.parseBoolean;
+import static java.lang.System.getenv;
+
 /**
  * This plugin configures formatting for Java source using Spotless
  * for Gradle. Since the act of formatting existing source can interfere
@@ -43,20 +46,27 @@ import java.io.File;
  */
 public class FormattingPrecommitPlugin implements Plugin<Project> {
 
+    private static final boolean IS_CI = parseBoolean(getenv("isCI"));
+    private static final boolean CODE_CLEANUP = parseBoolean(getenv("codeCleanup"));
+
+    @SuppressWarnings({"checkstyle:DescendantToken", "checkstyle:LineLength"})
     @Override
     public void apply(Project project) {
         project.getPluginManager().withPlugin("java-base", javaBasePlugin -> {
             project.getPlugins().apply(PrecommitTaskPlugin.class);
             project.getPlugins().apply(SpotlessPlugin.class);
             project.getPlugins().apply(RewritePlugin.class);
-
-            // Spotless resolves required dependencies from project repositories, so we need maven central
-            project.getRepositories().mavenCentral();
-
+            project.getRepositories().mavenCentral(); // spotless & rewrite demand mavenCentral
             spotless(project);
             rewrite(project);
-
             project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
+            project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("rewriteDryRun"));
+            project.getTasks().named("check").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
+            project.getTasks().named("check").configure(check -> check.dependsOn("rewriteDryRun"));
+            if (!IS_CI && CODE_CLEANUP) {
+                project.getTasks().named("assemble").configure(check -> check.dependsOn("rewriteRun"));
+                project.getTasks().named("assemble").configure(check -> check.dependsOn("spotlessApply"));
+            }
         });
     }
 

@@ -41,9 +41,6 @@ import static java.lang.System.getenv;
  */
 public class CheckConventionsPlugin implements Plugin<Project> {
 
-    private static final boolean IS_CI = parseBoolean(getenv("isCI"));
-    private static final boolean CODE_CLEANUP = parseBoolean(getenv("codeCleanup"));
-
     @SuppressWarnings("checkstyle:DescendantToken")
     @Override
     public void apply(Project project) {
