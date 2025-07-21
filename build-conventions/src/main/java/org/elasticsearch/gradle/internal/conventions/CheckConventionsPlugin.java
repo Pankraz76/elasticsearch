@@ -59,10 +59,8 @@ public class CheckConventionsPlugin implements Plugin<Project> {
             "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
         );
         project.getTasks().named("check").configure(check -> check.dependsOn("rewriteDryRun"));
-        project.getTasks().named("check").configure(check -> check.dependsOn("spotlessJavaCheck"));
         if (!IS_CI && CODE_CLEANUP) {
             project.getTasks().named("assemble").configure(check -> check.dependsOn("rewriteRun"));
-            project.getTasks().named("assemble").configure(check -> check.dependsOn("spotlessApply"));
         }
     }
 }
