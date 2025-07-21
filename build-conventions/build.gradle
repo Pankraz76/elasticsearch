@@ -61,7 +61,7 @@ gradlePlugin {
     }
     checkConventions {
       id = 'elasticsearch.checkConventions'
-      implementationClass = 'org.elasticsearch.gradle.internal.conventions.CheckConventionsPlugin'
+      implementationClass = 'org.elasticsearch.gradle.internal.conventions.precommit.CheckConventionsPlugin'
     }
   }
 }
