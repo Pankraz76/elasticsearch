@@ -47,6 +47,10 @@ public class CheckConventionsPlugin implements Plugin<Project> {
     @SuppressWarnings("checkstyle:DescendantToken")
     @Override
     public void apply(Project project) {
+        rewrite(project);
+    }
+
+    private static void rewrite(Project project) {
         RewriteExtension rewriteExtension = project.getExtensions().getByType(RewriteExtension.class);
         rewriteExtension.setFailOnDryRunResults(true);
         rewriteExtension.exclusion(

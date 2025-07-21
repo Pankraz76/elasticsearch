@@ -48,37 +48,61 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
         project.getPluginManager().withPlugin("java-base", javaBasePlugin -> {
             project.getPlugins().apply(PrecommitTaskPlugin.class);
             project.getPlugins().apply(SpotlessPlugin.class);
+            project.getPlugins().apply(RewritePlugin.class);
 
             // Spotless resolves required dependencies from project repositories, so we need maven central
             project.getRepositories().mavenCentral();
 
-            project.getExtensions().getByType(SpotlessExtension.class).java(java -> {
-                File elasticsearchWorkspace = Util.locateElasticsearchWorkspace(project.getGradle());
-                String importOrderPath = "build-conventions/elastic.importorder";
-                String formatterConfigPath = "build-conventions/formatterConfig.xml";
-
-                java.target("src/**/*.java");
-
-                // We enforce a standard order for imports
-                java.importOrderFile(new File(elasticsearchWorkspace, importOrderPath));
-
-                // Most formatting is done through the Eclipse formatter
-                java.eclipse().configFile(new File(elasticsearchWorkspace, formatterConfigPath));
-
-                // Ensure blank lines are actually empty. Since formatters are applied in
-                // order, apply this one last, otherwise non-empty blank lines can creep
-                // in.
-                java.trimTrailingWhitespace();
-
-                // When running build benchmarks we alter the source in some scenarios.
-                // The gradle-profiler unfortunately does not generate compliant formatted
-                // sources so we ignore that altered file when running build benchmarks
-                if(Boolean.getBoolean("BUILD_PERFORMANCE_TEST") && project.getPath().equals(":server")) {
-                    java.targetExclude("src/main/java/org/elasticsearch/bootstrap/BootstrapInfo.java");
-                }
-            });
+            spotless(project);
+            rewrite(project);
 
             project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
         });
+    }
+
+    private static void spotless(Project project) {
+        project.getExtensions().getByType(SpotlessExtension.class).java(java -> {
+            File elasticsearchWorkspace = Util.locateElasticsearchWorkspace(project.getGradle());
+            String importOrderPath = "build-conventions/elastic.importorder";
+            String formatterConfigPath = "build-conventions/formatterConfig.xml";
+
+            java.target("src/**/*.java");
+
+            // We enforce a standard order for imports
+            java.importOrderFile(new File(elasticsearchWorkspace, importOrderPath));
+
+            // Most formatting is done through the Eclipse formatter
+            java.eclipse().configFile(new File(elasticsearchWorkspace, formatterConfigPath));
+
+            // Ensure blank lines are actually empty. Since formatters are applied in
+            // order, apply this one last, otherwise non-empty blank lines can creep
+            // in.
+            java.trimTrailingWhitespace();
+
+            // When running build benchmarks we alter the source in some scenarios.
+            // The gradle-profiler unfortunately does not generate compliant formatted
+            // sources so we ignore that altered file when running build benchmarks
+            if(Boolean.getBoolean("BUILD_PERFORMANCE_TEST") && project.getPath().equals(":server")) {
+                java.targetExclude("src/main/java/org/elasticsearch/bootstrap/BootstrapInfo.java");
+            }
+        });
+    }
+
+    private static void rewrite(Project project) {
+        RewriteExtension rewriteExtension = project.getExtensions().getByType(RewriteExtension.class);
+        rewriteExtension.setFailOnDryRunResults(true);
+        rewriteExtension.exclusion(
+            "**OpenSearchTestCaseTests.java"
+        );
+        rewriteExtension.activeRecipe(
+            "org.openrewrite.java.RemoveUnusedImports",
+//            "org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
+//            "org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
+            "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
+        );
+        project.getTasks().named("check").configure(check -> check.dependsOn("rewriteDryRun"));
+        if (!IS_CI && CODE_CLEANUP) {
+            project.getTasks().named("assemble").configure(check -> check.dependsOn("rewriteRun"));
+        }
     }
 }
