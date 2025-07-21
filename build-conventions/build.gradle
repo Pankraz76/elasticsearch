@@ -59,10 +59,6 @@ gradlePlugin {
       id = 'elasticsearch.formatting'
       implementationClass = 'org.elasticsearch.gradle.internal.conventions.precommit.FormattingPrecommitPlugin'
     }
-    checkConventions {
-      id = 'elasticsearch.checkConventions'
-      implementationClass = 'org.elasticsearch.gradle.internal.conventions.precommit.CheckConventionsPlugin'
-    }
   }
 }
 
