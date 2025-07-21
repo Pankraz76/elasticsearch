@@ -33,11 +33,11 @@ import static java.lang.System.getenv;
  *
  * <p>To perform a reformat, run:
  *
- * <pre>    ./gradlew spotlessApply</pre>
+ * <pre>    ./gradlew rewriteDryRun spotlessApply</pre>
  *
  * <p>To check the current format, run:
  *
- * <pre>    ./gradlew spotlessJavaCheck</pre>
+ * <pre>    ./gradlew rewriteDryRun spotlessJavaCheck</pre>
  *
  * <p>This is also carried out by the `precommit` task.
  *
