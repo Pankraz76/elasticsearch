@@ -15,6 +15,8 @@ import com.diffplug.gradle.spotless.SpotlessPlugin;
 import org.elasticsearch.gradle.internal.conventions.util.Util;
 import org.gradle.api.Plugin;
 import org.gradle.api.Project;
+import org.openrewrite.gradle.RewriteExtension;
+import org.openrewrite.gradle.RewritePlugin;
 
 import java.io.File;
 
@@ -55,7 +57,7 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
         project.getPluginManager().withPlugin("java-base", javaBasePlugin -> {
             project.getPlugins().apply(PrecommitTaskPlugin.class);
             project.getPlugins().apply(SpotlessPlugin.class);
-//            project.getPlugins().apply(RewritePlugin.class);
+            project.getPlugins().apply(RewritePlugin.class);
             project.getRepositories().mavenCentral(); // spotless & rewrite demand mavenCentral
             spotless(project);
             rewrite(project);
@@ -99,18 +101,19 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
     }
 
     private static void rewrite(Project project) {
-//        RewriteExtension rewriteExtension = project.getExtensions().getByType(RewriteExtension.class);
-//        rewriteExtension.setFailOnDryRunResults(true);
-//        rewriteExtension.setExportDatabase(true);
-//        rewriteExtension.exclusion(
-//            "**OpenSearchTestCaseTests.java"
-//        );
-//        rewriteExtension.activeRecipe(
-//            "org.openrewrite.java.RemoveUnusedImports",
-////            "org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
-////            "org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
-//            "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
-//        );
+        RewriteExtension rewriteExtension = project.getExtensions().getByType(RewriteExtension.class);
+        rewriteExtension.setFailOnDryRunResults(true);
+        rewriteExtension.setExportDatatables(true);
+        rewriteExtension.exclusion(
+            "**OpenSearchTestCaseTests.java"
+        );
+//         rewrite("org.openrewrite.recipe:rewrite-rewrite:0.9.0")
+        rewriteExtension.activeRecipe(
+            "org.openrewrite.java.RemoveUnusedImports",
+//            "org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
+//            "org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
+            "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
+        );
         project.getTasks().named("check").configure(check -> check.dependsOn("rewriteDryRun"));
         if (!IS_CI && CODE_CLEANUP) {
             project.getTasks().named("assemble").configure(check -> check.dependsOn("rewriteRun"));
