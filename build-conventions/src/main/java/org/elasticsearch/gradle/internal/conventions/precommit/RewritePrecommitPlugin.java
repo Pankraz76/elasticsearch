@@ -66,10 +66,10 @@ public class RewritePrecommitPlugin implements Plugin<Project> {
     private static void rewrite(Project project) {
         RewriteExtension rewriteExtension = project.getExtensions().getByType(RewriteExtension.class);
         rewriteExtension.activeRecipe(
-            "org.openrewrite.java.RemoveUnusedImports"
+            //"org.openrewrite.java.RemoveUnusedImports"
             //"org.openrewrite.staticanalysis.RemoveUnusedLocalVariables",
             //"org.openrewrite.staticanalysis.RemoveUnusedPrivateFields",
-            //"org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
+            "org.openrewrite.staticanalysis.RemoveUnusedPrivateMethods"
         );
         rewriteExtension.exclusion("**OpenSearchTestCaseTests.java");
         rewriteExtension.setExportDatatables(true);
