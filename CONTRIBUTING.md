@@ -238,16 +238,16 @@ the [Spotless Gradle] plugin. All new projects are automatically formatted,
 while existing projects are gradually being opted-in. The formatting check
 is run automatically via the `precommit` task, but it can be run explicitly with:
 
-    ./gradlew spotlessJavaCheck
+- `./gradlew spotlessCheck rewriteDryRun`
 
 It is usually more useful, and just as fast, to just reformat the project. You
 can do this with:
 
-    ./gradlew spotlessApply
+- `./gradlew spotlessApply rewriteRun`
 
 These tasks can also be run for specific subprojects, e.g.
 
-    ./gradlew server:spotlessJavaCheck
+- `./gradlew server:spotlessCheck server:rewriteDryRun`
 
 Please follow these formatting guidelines:
 

@@ -34,7 +34,7 @@ import java.io.File;
  *
  * <p>To check the current format, run:
  *
- * <pre>    ./gradlew spotlessJavaCheck</pre>
+ * <pre>    ./gradlew spotlessCheck</pre>
  *
  * <p>This is also carried out by the `precommit` task.
  *
@@ -79,7 +79,7 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
                 }
             });
 
-            project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
+            project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessCheck"));
         });
     }
 }
