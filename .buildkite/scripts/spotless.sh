@@ -16,6 +16,7 @@ PREVIOUS_COMMIT_MESSAGE="$(git log -1 --pretty=%B)"
 
 echo "--- Running spotless"
 .ci/scripts/run-gradle.sh -Dscan.tag.NESTED spotlessApply
+.ci/scripts/run-gradle.sh -Dscan.tag.NESTED --write-verification-metadata sha256
 
 if git diff --exit-code; then
   echo "No changes found after running spotless. Don't need to auto commit."
