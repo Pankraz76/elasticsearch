@@ -48,6 +48,14 @@ dependencies {
 String grammarPath = 'src/main/antlr'
 String outputPath = 'src/main/java/org/elasticsearch/xpack/kql/parser'
 
+pluginManager.withPlugin('com.diffplug.spotless') {
+  spotless {
+    java {
+      // for some reason "${outputPath}/KqlBaser*.java" does not match the same files...
+      targetExclude "src/main/java/org/elasticsearch/xpack/kql/parser/KqlBase*.java"
+    }
+  }
+}
 tasks.named('checkstyleMain').configure {
   exclude { normalize(it.file.toString()).contains("src/main/java/org/elasticsearch/xpack/kql/parser/KqlBase") }
 }

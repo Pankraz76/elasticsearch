@@ -65,7 +65,11 @@ public record IndexVersion(int id, Version luceneVersion) implements VersionId<I
 
             assert version.onOrAfter(IndexVersions.LATEST_DEFINED);
             assert version.luceneVersion.equals(Version.LATEST)
-                : "IndexVersion must be upgraded to [" + Version.LATEST + "] is still set to [" + version.luceneVersion + "]";
+                : "IndexVersion must be upgraded to ["
+                + Version.LATEST
+                + "] is still set to ["
+                + version.luceneVersion
+                + "]";
             return version;
         }
     }
@@ -134,7 +138,7 @@ public record IndexVersion(int id, Version luceneVersion) implements VersionId<I
             // same compatibility version as current
             return IndexVersions.MINIMUM_COMPATIBLE;
         } else {
-            int compatId = (major - 1) * 1_000_000;
+            int compatId = (major-1) * 1_000_000;
             if (major <= 8) compatId += 99;
             return IndexVersion.fromId(compatId);
         }
