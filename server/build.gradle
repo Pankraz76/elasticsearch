@@ -166,7 +166,9 @@ TaskProvider<Test> systemPropertiesOverrideTest = tasks.register("systemProperti
   classpath = sourceSets.test.runtimeClasspath
   testClassesDirs = sourceSets.test.output.classesDirs
 }
-
+repositories {
+  mavenCentral()
+}
 tasks.named("check").configure {
   dependsOn(systemPropertiesOverrideTest)
 }

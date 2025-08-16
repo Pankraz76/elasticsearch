@@ -58,6 +58,7 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
                 String formatterConfigPath = "build-conventions/formatterConfig.xml";
 
                 java.target("src/**/*.java");
+                java.targetExclude("src/main/generated/**/*.java");
                 java.removeUnusedImports();
 
                 // We enforce a standard order for imports
