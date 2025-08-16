@@ -89,12 +89,3 @@ tasks.named("run").configure {
   dependsOn "copyExpression", "copyPainless", configurations.nativeLib
   systemProperty 'es.nativelibs.path', TestUtil.getTestLibraryPath(file("../libs/native/libraries/build/platform/").toString())
 }
-
-spotless {
-  java {
-    // IDEs can sometimes run annotation processors that leave files in
-    // here, causing Spotless to complain. Even though this path ought not
-    // to exist, exclude it anyway in order to avoid spurious failures.
-    targetExclude 'src/main/generated/**/*.java'
-  }
-}

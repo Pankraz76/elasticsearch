@@ -45,16 +45,6 @@ tasks.named('checkstyleMain').configure {
 
 tasks.named("spotlessJava") { dependsOn "stringTemplates" }
 
-spotless {
-  java {
-    /*
-     * Generated files go here.
-     */
-    toggleOffOn('begin generated imports', 'end generated imports')
-    targetExclude "src/main/generated/**/*.java"
-  }
-}
-
 def prop(Name, Type, type, Wrapper, TYPE, BYTES, Array, Hash) {
   return [
     // Name of the DataType. Use in DataType names

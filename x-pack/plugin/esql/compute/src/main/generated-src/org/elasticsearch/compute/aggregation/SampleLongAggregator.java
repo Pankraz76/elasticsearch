@@ -9,6 +9,7 @@ package org.elasticsearch.compute.aggregation;
 
 // begin generated imports
 import org.apache.lucene.util.BytesRef;
+import org.elasticsearch.common.Randomness;
 import org.elasticsearch.common.breaker.CircuitBreaker;
 import org.elasticsearch.common.util.BigArrays;
 import org.elasticsearch.compute.ann.Aggregator;
@@ -25,9 +26,6 @@ import org.elasticsearch.compute.operator.DriverContext;
 import org.elasticsearch.compute.operator.topn.DefaultUnsortableTopNEncoder;
 import org.elasticsearch.core.Releasables;
 import org.elasticsearch.search.sort.SortOrder;
-
-import org.elasticsearch.common.Randomness;
-import java.util.random.RandomGenerator;
 // end generated imports
 
 /**

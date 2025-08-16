@@ -147,14 +147,6 @@ String grammarPath = 'src/main/antlr'
 // need to customize the spotless config below.
 String outputPath = 'src/main/java/org/elasticsearch/painless/antlr'
 
-pluginManager.withPlugin('com.diffplug.spotless') {
-    spotless {
-        java {
-            targetExclude "${outputPath}/*.java"
-        }
-    }
-}
-
 tasks.register("cleanGenerated", Delete) {
     delete fileTree(grammarPath) {
         include '*Painless*.tokens'
