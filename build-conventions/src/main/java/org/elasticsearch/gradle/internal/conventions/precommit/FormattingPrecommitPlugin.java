@@ -77,6 +77,7 @@ public class FormattingPrecommitPlugin implements Plugin<Project> {
                 if(Boolean.getBoolean("BUILD_PERFORMANCE_TEST") && project.getPath().equals(":server")) {
                     java.targetExclude("src/main/java/org/elasticsearch/bootstrap/BootstrapInfo.java");
                 }
+                java.targetExclude("src/main/java/org/elasticsearch/index/IndexVersion.java");
             });
 
             project.getTasks().named("precommit").configure(precommitTask -> precommitTask.dependsOn("spotlessJavaCheck"));
